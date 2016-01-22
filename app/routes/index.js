@@ -1,7 +1,10 @@
 'use strict';
 
+var express = require('express');
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+var UrlShortener = require(path + '/app/controllers/urlShortener.server.js');
+
 
 module.exports = function (app, passport) {
 
@@ -14,11 +17,33 @@ module.exports = function (app, passport) {
 	}
 
 	var clickHandler = new ClickHandler();
+	var urlShortener = new UrlShortener();
 
 	app.route('/')
 		.get(isLoggedIn, function (req, res) {
 			res.sendFile(path + '/public/index.html');
 		});
+
+	app.route(/\/_api\/urls\/?/i)
+		.get(function(req, res) {
+			var out = urlShortener.shortenLink(req, function(obj) {
+				console.log("final output: ", obj);
+				res.json(obj);
+			});
+		});
+		
+	app.route(/\/[a-z0-9]+/i)
+		.get(function(req, res) {
+			var out = urlShortener.restoreLink(req, function(link) {
+				res.writeHead(302, {Location: link});
+				res.end();
+			});
+		});
+
+
+// From here on, the remainder the of the ClementineJS template.
+// Not related to the required functionality.
+// TODO: clean up before release.
 
 	app.route('/login')
 		.get(function (req, res) {
