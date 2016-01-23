@@ -1,0 +1,77 @@
+
+/****************************
+*						    *
+*       PAGE STYLES         *
+*						    *
+****************************/
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,800&subset=latin,cyrillic);
+
+
+* {
+  font-family: "Open Sans", sans-serif;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: rgba(236, 240, 241,1.0);
+  /* solution for iphone */
+  width: 100%;
+  overflow-x: hidden;
+  color: rgba(52, 73, 94,1.0);
+}
+
+.site-title {
+    margin: 70px 0 30px;
+    font-weight: 700;
+}
+
+.instructions {
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+.form-inline,
+.form-group {
+    width: 95% !important;
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+.enter-date,
+.submit-entry {
+    display: inline-block;
+    margin: 20px auto 30px !important;
+}
+
+.enter-date {
+    font-size: 1.5em;
+    width: 100% !important;
+}
+
+.submit-entry {
+    
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.nav,
+.navbar,
+.navbar-default,
+.navbar-collapse,
+.nav.navbar.navbar-default {
+    background-color: rgba(236, 240, 241,1.0);
+}
+
+.navbar-default {
+    background-image: none;
+}
+
+.json {
+    overflow: scroll !important;
+}

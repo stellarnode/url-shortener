@@ -12,27 +12,15 @@ function urlShortener(req, res) {
     function validateURL(obj) {
         
         /*
-        
-        var result;
-        var myRegExp =/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
-        var urlToValidate = obj.originalUrl;
-        
-        console.log("validating url: ", urlToValidate);
-        
-        if (!myRegExp.test(urlToValidate)) {
-            result = false;
-        } else {
-            result =  true;
-        }
-        
+        console.log("here is the obj... \n", obj, "\n");
+        console.log("testing for obj.hostname: ", obj.hostname);
+        console.log("testing for obj.path: ", obj.path);
         //*/
         
-        //*
-        
-        var validCharsHost = /[a-z0-9\-\.\%]/i;
+        var validCharsHost = /[a-z0-9]([a-z0-9\-\.\%]?)+\.([a-z]+)/i;
         var validCharsPath = /[a-z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]/i;
-        var host = validCharsHost.test(obj.hostname) && /^[^\-\.]/.test(obj.hostname) && /[^\-\.]$/.test(obj.hostname);
-        var path = validCharsPath.test(obj.path) && (/^\/?/.test(obj.path) || obj.path === "" || obj.path === null);
+        var host = (validCharsHost.test(obj.hostname) && /^[^\-\.]/.test(obj.hostname) && /[^\-\.]$/.test(obj.hostname)) || obj.hostname === "localhost";
+        var path = validCharsPath.test(obj.path) && (/^\/?/.test(obj.path) || obj.path === "" || obj.path === null || obj.path === "/");
         var protocol = obj.protocol === "http:" || obj.protocol === "ftp:" || obj.protocol === "" || obj.protocol === null;
         var result = false;
         
@@ -41,15 +29,9 @@ function urlShortener(req, res) {
         }
         
         if (obj.port) {
-            var port = /\d{2, 5}/.test(obj.port);
+            var port = /\d{2,5}/.test(obj.port);
             if (!port) result = false;
         }
-        
-        //*/
-        
-        console.log("obj to validate: ", obj);
-        
-        console.log("host: ", host, " path: ", path, " protocol: ", protocol, " port: ", port, " validation result: ", result);
 
         return result;
     }
@@ -77,27 +59,29 @@ function urlShortener(req, res) {
             out = "Sorry. Something went wrong with our internal calculations.";
         }
         
-        console.log("composition for short link: ", out);
         return out;
-    }
-    
-    function makeItShortandRemember(link) {
-        var short;
-        
-        
-        
     }
     
     
     this.shortenLink = function(req, next) {
         var short;
+        
+        console.log("link i received from request... ", req.originalUrl);
+        
         var link = req.originalUrl;
         link = link.replace(/^\/_api\/urls\//i, "");
         var parsedLink = url.parse(link);
         
-        if (validateURL(parsedLink)) {
+        if (parsedLink.protocol === null || /localhost/i.test(parsedLink.protocol)) {
+            parsedLink = url.parse("http://" + link);
+            link = "http://" + link;
+        }
         
-        ///////////    
+        if (validateURL(parsedLink)) {
+
+        ///////////
+        
+            console.log("parsed link... ", parsedLink);
         
             if (!parsedLink.protocol) {
                 link = "http://" + link;
@@ -113,11 +97,10 @@ function urlShortener(req, res) {
                 
                 links.findOne({"linksCounter": {$gte: 0}}, function(err, doc) {
                     if (err) console.error(err);
-                    console.log("doc with linkCounter found =", doc);
+
                     if (!doc || !doc.linksCounter) {
                         links.insert({"linksCounter": 0}, function(err, result) {
                             if (err) console.log(err);
-                            console.log("first document with counter inserted: ", result);
                         });
                     } 
                     
@@ -126,7 +109,7 @@ function urlShortener(req, res) {
                         
                         links.findOne({"linksCounter": {$gte: 0}}, function(err, doc) {
                             if (err) console.log(err);
-                            console.log("link: ", link, "... links counter passed further: ", doc.linksCounter);
+                            
                             short = makeItShort(doc.linksCounter);
                             links.insert({
                                 "id": short,
@@ -135,10 +118,7 @@ function urlShortener(req, res) {
                             }, function(err, doc) {
                                 if (err) {
                                     console.error(err);
-                                    console.log(err);
                                 }
-                                
-                                console.log("before forming the output obj: ", doc.ops[0].shortUrl, doc.ops[0].originalUrl);
                                 
                                 var outObj = {
                                     "shortUrl": doc.ops[0].shortUrl,
@@ -174,12 +154,18 @@ function urlShortener(req, res) {
                 var links = db.collection("links");
                 links.findOne({ "id": link }, function(err, doc) {
                     if (err) console.error(err);
-                    long = doc.originalUrl;
+                    
+                    if (doc) {
+                        long = doc.originalUrl;
+                    } else {
+                        long = short.originalUrl;
+                    }
+                    db.close();
                     next(long);
                 });
             });
         } else {
-            long = "Sorry, could not find the link in our database.";
+            long = "/_home";
             next(long);
         }
         

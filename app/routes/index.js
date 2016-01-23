@@ -20,27 +20,48 @@ module.exports = function (app, passport) {
 	var urlShortener = new UrlShortener();
 
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
+		.get(function (req, res) {
+			res.redirect('/_home');
+		});
+		
+	app.route('/_home')
+		.get(function (req, res) {
 			res.sendFile(path + '/public/index.html');
 		});
 
 	app.route(/\/_api\/urls\/?/i)
 		.get(function(req, res) {
 			var out = urlShortener.shortenLink(req, function(obj) {
-				console.log("final output: ", obj);
 				res.json(obj);
 			});
 		});
 		
+		
 	app.route(/\/[a-z0-9]+/i)
 		.get(function(req, res) {
-			var out = urlShortener.restoreLink(req, function(link) {
-				res.writeHead(302, {Location: link});
+			
+			if (req.originalUrl === "/favicon.ico" || req.originalUrl === "/api/:id") {
+				res.writeHead(200, {
+				  'Content-Type': 'text/plain' });
 				res.end();
-			});
-		});
+			} else {
+			
+				var out = urlShortener.restoreLink(req, function(link) {
+			
+					console.log("i was looking for: ", req.originalUrl.replace(/^\//, ""));
+					console.log("link found in database: ", link);
+					
+					res.writeHead(302, {Location: link});
+					res.end();
+					
+				});
+				
+			}
 
+		});	
+		
 
+/*//
 // From here on, the remainder the of the ClementineJS template.
 // Not related to the required functionality.
 // TODO: clean up before release.
@@ -79,4 +100,8 @@ module.exports = function (app, passport) {
 		.get(isLoggedIn, clickHandler.getClicks)
 		.post(isLoggedIn, clickHandler.addClick)
 		.delete(isLoggedIn, clickHandler.resetClicks);
+		
+//*/
+////
+
 };

@@ -3,37 +3,99 @@
 <html>
 
 	<head>
-		<title>Clementine.js - The elegant and lightweight full stack JavaScript boilerplate.</title>
+		<title>Simple URL Shortener API Microservice.</title>
 		
-		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	
+	    <link href="/public/css/style.css" rel="stylesheet" type="text/css">
 	</head>
 
-	<header>
-		<p>Welcome, <span id="display-name"></span>!</p>
-		<a class="menu" href="/profile">Profile</a>
-		<p>|</p>
-		<a class="menu" href="/logout">Logout</a>
+	<!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">API Basejumps</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/">URL Shortener</a></li>
+              <li><a href="https://timestamp-micro-stellarnode.c9users.io/">Timestamp</a></li>
+              <li><a href="https://timestamp-micro-stellarnode.c9users.io/whoami">HeaderParser</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+
+	<header class=container>
+	    <div class="row">
+	        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+        		<h1 class="site-title">Simple URL Shortener API Microservice</h1>
+        		<h4>How to use the service:</h4>
+        		<ul class="instructions">
+        		    <li>Point your browser or your app to the following path on our domain: <code>/_api/urls/</code>. After this path you should put a valid URL you want to be shortened. For example, <code>http://www.google.com</code>.</li>
+        		    <li>The API will respond with a JSON object with two fields - the shortened URL and the original URL. For example:
+        		    	<code class="json">
+        		    		<pre class="json">
+        		    			
+{
+    "shortUrl":"https://url-shortener-stellarnode.c9users.io/B",
+    "originalUrl":"http://www.google.com"
+}
+        		    		</pre>
+        		    	</code>
+        		    </li>
+        		    <li>Alternatively you can use the form below to enter a URL you want to shorten. It will be appended to the path
+        		    mentioned above.</li>
+        		    <li>Once you push the button, we will show you the output of your query in the code block below.
+        		    The API responds with a JSON string. If the URL format in the request is not valid or is not
+        		    recognized, a JSON object with <code>Invalid URL</code> value is returned.</li>
+        		</ul>
+    		</div>
+		</div>
 	</header>
 
 	<body>
 		<div class="container">
-			<img src="/public/img/clementine_150.png" />
-			<br />
-			<p class="clementine-text">Clementine.js</p>
-		</div>
-	
-		<div class="container">
-			<p>You have clicked the button <span id="click-nbr"></span> times.</p>
-			<br />
-			<div class="btn-container">
-				<button type="submit" class="btn btn-add">CLICK ME!</button>
-				<button class="btn btn-delete">RESET</button>
-			</div>
+			<div class="row">
+	            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+	                <form id="date-form" class="form-inline form-group">
+	                	<div class="col-sm-8 col-sm-offset-1 col-xs-12">
+	                    	<input type="text" class="form-control input-lg enter-date" name="" placeholder="Enter a URL..."/>
+	                    </div>
+	                    <div class="col-sm-3 col-xs-12">
+	                    	<input type="submit" class="btn btn-lg btn-primary submit-entry" value="Submit"/>
+	                    </div>
+	                </form>
+	                <br>
+	                <br>
+	                <div id="interaction">
+	                	
+	                </div>
+	            </div>
+	        </div> 
 		</div>
 		
 		<script type="text/javascript" src="common/ajax-functions.js"></script>
-		<script type="text/javascript" src="controllers/clickController.client.js"></script>
 		<script type="text/javascript" src="controllers/userController.client.js"></script>
+		<script type="text/javascript" src="controllers/urlShortener.client.js"></script>
 	</body>
 
 </html>
+
