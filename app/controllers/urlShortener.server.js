@@ -21,7 +21,7 @@ function urlShortener(req, res) {
         var validCharsPath = /[a-z0-9\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%]/i;
         var host = (validCharsHost.test(obj.hostname) && /^[^\-\.]/.test(obj.hostname) && /[^\-\.]$/.test(obj.hostname)) || obj.hostname === "localhost";
         var path = validCharsPath.test(obj.path) && (/^\/?/.test(obj.path) || obj.path === "" || obj.path === null || obj.path === "/");
-        var protocol = obj.protocol === "http:" || obj.protocol === "ftp:" || obj.protocol === "" || obj.protocol === null;
+        var protocol = obj.protocol === "http:" || obj.protocol === "https:" || obj.protocol === "ftp:" || obj.protocol === "" || obj.protocol === null;
         var result = false;
         
         if (host && path && protocol) {
