@@ -8,13 +8,13 @@ var UrlShortener = require(path + '/app/controllers/urlShortener.server.js');
 
 module.exports = function (app, passport) {
 
-	function isLoggedIn (req, res, next) {
-		if (req.isAuthenticated()) {
-			return next();
-		} else {
-			res.redirect('/login');
-		}
-	}
+	// function isLoggedIn (req, res, next) {
+	// 	if (req.isAuthenticated()) {
+	// 		return next();
+	// 	} else {
+	// 		res.redirect('/login');
+	// 	}
+	// }
 
 	var clickHandler = new ClickHandler();
 	var urlShortener = new UrlShortener();
